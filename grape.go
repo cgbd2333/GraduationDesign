@@ -12,9 +12,9 @@ type SmartContract struct{
 }
 
 type Asset struct {
-	ID 		string `json:"ID"`
+	ID 		string `json:"id"`
 	Owner	string `json:"owner"`
-	Value	int    `json:"Value"`
+	Value	int    `json:"value"`
 }
 
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
@@ -80,6 +80,30 @@ func (s *SmartContract) GetALLAssets(ctx contractapi.TransactionContextInterface
 	}
 
 	return assets,nil
+}
+
+func (s *SmartContract) AddAsset(ctx contractapi.TransactionContextInterface,id string, owner string, value int) error {
+	asset := Asset{
+			ID: id,
+			Owner: owner,
+			Value: value,
+	}
+	assetJSON,_ := json.Marshal(asset)
+
+	return ctx.GetStub().PutState(id,assetJSON)
+}
+
+func (s *SmartContract) ChangeOwner(ctx contractapi.TransactionContextInterface, id string, newOwner string) error {
+	asset,err:= s.ReadAsset(ctx,id)
+
+	if err != nil {
+		return err
+	}
+
+	asset.Owner=newOwner
+
+	assetJSON,_ :=json.Marshal(asset)
+	return ctx.GetStub().PutState(id,assetJSON)
 }
 
 func main(){
