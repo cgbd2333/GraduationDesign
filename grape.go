@@ -11,18 +11,35 @@ type SmartContract struct{
 	contractapi.Contract
 }
 
+type Tel struct {
+	TEL		string `json:"TEL"`
+}
+
 type Grape struct {
-	Batch 	 	 string		`json:"batch"`		//批次
-	Producer 	 string		`json:"producer"`	//生产者
-	Temperature	 float32	`json:"temperature"`//温度
-	PH		 	 float32	`json:"ph"`			//PH值
+	Batch 	 	 string		`json:"Batch"`		//批次
+	Producer 	 string		`json:"Producer"`	//生产者
+	Tel			 Tel		`json:"Tel"`
+	Temperature	 float32	`json:"Temperature"`//温度
+	PH		 	 float32	`json:"PH"`			//PH值
 }
 
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	grapes := []Grape{
-		{Batch:"20220315-1",Producer:"ZhangSan",Temperature:20.0,PH:6.0},
-		{Batch:"20220315-2",Producer:"LiSi",Temperature:21.2,PH:5.0},
-		{Batch:"20220316-1",Producer:"WangWu",Temperature:22.0,PH:5.8},
+		{Batch: "20220315-1",Producer: "ZhangSan",Tel:Tel{TEL:"123456"},Temperature: 20.0,PH: 6.0},
+		{
+			Batch: "20220315-2",
+			Producer: "LiSi",
+			Tel: Tel{TEL:"123457"},
+			Temperature: 21.2,
+			PH: 5.0,
+		},
+		{
+			Batch: "20220316-1",
+			Producer: "WangWu",
+			Tel: Tel{TEL:"123458"},
+			Temperature: 22.0,
+			PH: 5.8,
+		},
 	}
 
 	for _,grape := range grapes {
@@ -54,7 +71,7 @@ func (s *SmartContract) QuaryGrape(ctx contractapi.TransactionContextInterface,b
 	if err != nil{
 		return nil,err
 	}
-
+	
 	return &grape,nil
 }
 
@@ -85,10 +102,11 @@ func (s *SmartContract) QuaryAllGrapes(ctx contractapi.TransactionContextInterfa
 
 func (s *SmartContract) AddGrape(ctx contractapi.TransactionContextInterface,batch string, producer string, temperature float32, ph float32) error {
 	grape := Grape{
-			Batch: batch,
-			Producer: producer,
-			Temperature: temperature,
-			PH: ph,
+			batch,
+			producer,
+			Tel{""},
+			temperature,
+			ph,
 	}
 	grapeJSON,_ := json.Marshal(grape)
 
@@ -103,6 +121,19 @@ func (s *SmartContract) ChangeProducer(ctx contractapi.TransactionContextInterfa
 	}
 
 	grape.Producer=newProducer
+
+	grapeJSON,_ :=json.Marshal(grape)
+	return ctx.GetStub().PutState(batch,grapeJSON)
+}
+
+func (s *SmartContract) ChangeTel(ctx contractapi.TransactionContextInterface, batch string, newTel string) error {
+	grape,err:= s.QuaryGrape(ctx,batch)
+
+	if err != nil {
+		return err
+	}
+
+	grape.Tel.TEL=newTel
 
 	grapeJSON,_ :=json.Marshal(grape)
 	return ctx.GetStub().PutState(batch,grapeJSON)
