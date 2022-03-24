@@ -12,36 +12,35 @@ type SmartContract struct{
 }
 
 type Producer struct {
-	Name		 string 	`json:"Name"`		//种植方姓名
-	Tel			 string 	`json:"Tel"`		//种植方电话
-	Temperature	 float32	`json:"Temperature"`//大棚温度
-	PH		 	 float32	`json:"PH"`			//土壤PH值
-	Time		 string		`json:"Time`		//采摘时间
+	Name		 string 	`json:"种植方姓名"`		//种植方姓名
+	Tel			 string 	`json:"种植方电话"`		//种植方电话
+	Temperature	 float32	`json:"大棚温度"`	//大棚温度
+	PH		 	 float32	`json:"土壤PH值"`		//土壤PH值
+	Time		 string		`json:"采摘时间`		//采摘时间
 }
 
 type Transporter struct {
-	Name		string		`json:"Name"`		//运输司机姓名
-	Tel			string 		`json:"Tel"`		//司机电话
-	CarNum		string		`json:"CarNum"`		//车牌号
-	StartAddress string		`json:"StartAddress"`//出发地
-	StartTime	string		`json:"StartTime"`	//出发时间
-	EndAddress	string		`json:"EndAddress"`//目的地
-	EndTime		string		`json:"EndTime"`	//到达时间
+	Name		string		`json:"运输司机姓名"`	//运输司机姓名
+	Tel			string 		`json:"司机电话"`		//司机电话
+	CarNum		string		`json:"车牌号"`			//车牌号
+	StartAddress string		`json:"出发地"`			//出发地
+	StartTime	string		`json:"出发时间"`		//出发时间
+	EndAddress	string		`json:"目的地"`			//目的地
+	EndTime		string		`json:"到达时间"`		//到达时间
 }
 
 type Sale struct {
-	Name		string		`json:"Name"`		//销售员姓名
-	Time		string		`json:"Time"`		//售卖时间
+	Name		string		`json:"销售员姓名"`		//销售员姓名
+	Time		string		`json:"售卖时间"`		//售卖时间
 }
 
 type Grape struct {
-	Batch 	 	 string		`json:"Batch"`		//批次
-	Producer	 Producer	`json:"Producer"`	//生产
-	Transporter  Transporter `json:"Transporter"`//运输
-	Sale		 Sale		`json:"Sale"`		//售卖
+	Batch 	 	 string		`json:"批次"`			//批次
+	Producer	 Producer	`json:"生产"`			//生产
+	Transporter  Transporter `json:"运输"`			//运输
+	Sale		 Sale		`json:"售卖"`			//售卖
 }
 
-//链码初始化
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
 	grapes := []Grape{
 		{
@@ -101,7 +100,6 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 	return nil
 }
 
-//查询某一条记录
 func (s *SmartContract) QuaryGrape(ctx contractapi.TransactionContextInterface,batch string) (*Grape,error) {
 	grapeJSON,err := ctx.GetStub().GetState(batch)
 	if err != nil{
@@ -120,7 +118,6 @@ func (s *SmartContract) QuaryGrape(ctx contractapi.TransactionContextInterface,b
 	return &grape,nil
 }
 
-//查询所有记录
 func (s *SmartContract) QuaryAllGrapes(ctx contractapi.TransactionContextInterface) ([]*Grape,error){
 	resultsIterator,err := ctx.GetStub().GetStateByRange("","")
 	if err != nil {
@@ -146,7 +143,6 @@ func (s *SmartContract) QuaryAllGrapes(ctx contractapi.TransactionContextInterfa
 	return grapes,nil
 }
 
-//上传种植方信息
 func (s *SmartContract) AddProducer(ctx contractapi.TransactionContextInterface,batch string, name string, tel string, temperature float32, ph float32, time string) error {
 	grape := Grape{
 		Batch: batch,
@@ -173,7 +169,7 @@ func (s *SmartContract) AddProducer(ctx contractapi.TransactionContextInterface,
 	return ctx.GetStub().PutState(batch,grapeJSON)
 }
 
-//上传运输方信息
+
 func (s *SmartContract) AddTranspoter(ctx contractapi.TransactionContextInterface, batch string, name string, tel string, carnum string, startaddress string, starttime string, endaddress string, endtime string) error {
 	grape,err:= s.QuaryGrape(ctx,batch)
 
@@ -193,7 +189,6 @@ func (s *SmartContract) AddTranspoter(ctx contractapi.TransactionContextInterfac
 	return ctx.GetStub().PutState(batch,grapeJSON)
 }
 
-//上传售卖方信息
 func (s *SmartContract) AddSale(ctx contractapi.TransactionContextInterface, batch string, name string, time string) error {
 	grape,err:= s.QuaryGrape(ctx,batch)
 
