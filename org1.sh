@@ -20,7 +20,7 @@ peer lifecycle chaincode package grape.tar.gz \
 --label grape_1
 echo "打包已完成"
 
-peer lifecycle chaincode install grape.tar.gz &> id.txt
+peer lifecycle chaincode install grape.tar.gz &> grapeid.txt
 echo "安装已完成"
 
 cat grapeid.txt
