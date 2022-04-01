@@ -11,17 +11,35 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrg\
 anizations/org1.example.com/users/Admin@org1.example.com/msp
 export CORE_PEER_ADDRESS=localhost:7051
 
+./network.sh down
 ./network.sh up createChannel
-echo "链码已启动"
+if [ $? -eq 0 ]; then
+     echo "链码启动成功"
+else
+     echo "链码启动失败"
+	   exit 1
+fi
 
 peer lifecycle chaincode package grape.tar.gz \
 --path /home/hong/grape `# grape.go所在的文件路径`\
 --lang golang \
 --label grape_1
-echo "打包已完成"
+if [ $? -eq 0 ]; then
+     echo "打包完成"
+else
+     echo "打包失败"
+	   exit 1
+fi
 
 peer lifecycle chaincode install grape.tar.gz &> grapeid.txt
-echo "安装已完成"
+
+if [ $? -eq 0 ]; then
+     echo "安装成功"
+else
+     echo "安装失败"
+	   cat grapeid.txt
+	   exit 1
+fi
 
 cat grapeid.txt
 
@@ -46,7 +64,12 @@ peer lifecycle chaincode approveformyorg -o localhost:7050 \
 --package-id $grape_id Label: grape_1 \
 --sequence 1
 
-echo "背书已完成"
+if [ $? -eq 0 ]; then
+     echo "背书成功"
+else
+     echo "背书失败"
+	   exit 1
+fi
 
 peer lifecycle chaincode checkcommitreadiness \
 --channelID mychannel \
