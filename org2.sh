@@ -17,7 +17,12 @@ anizations/org2.example.com/users/Admin@org2.example.com/msp
 export CORE_PEER_ADDRESS=localhost:9051
 
 peer lifecycle chaincode install grape.tar.gz 
-echo "安装已完成"
+if [ $? -eq 0 ]; then
+     echo "安装成功"
+else
+     echo "安装失败"
+	   exit 1
+fi
 
 id1=$(cat grapeid.txt)
 id2=${id1##*:}
@@ -38,7 +43,12 @@ peer lifecycle chaincode approveformyorg \
 --version 1.0 \
 --package-id $grape_id Label: grape_1 \
 --sequence 1
-echo "背书已完成"
+if [ $? -eq 0 ]; then
+     echo "背书成功"
+else
+     echo "背书失败"
+	   exit 1
+fi
 
 peer lifecycle chaincode checkcommitreadiness \
 --channelID mychannel \
