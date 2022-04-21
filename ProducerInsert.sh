@@ -13,12 +13,18 @@ anizations/org1.example.com/users/Admin@org1.example.com/msp
 cafile=/opt/fabric-2.3.0/scripts/fabric-samples/test-network/org\
 anizations/ordererOrganizations/example.com/orderers/orderer.exam\
 ple.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
 org1_CertFiles=/opt/fabric-2.3.0/scripts/fabric-samples/test-netw\
 ork/organizations/peerOrganizations/org1.example.com/peers/peer0.o\
 rg1.example.com/tls/ca.crt 
+
 org2_CertFiles=/opt/fabric-2.3.0/scripts/fabric-samples/test-netw\
 ork/organizations/peerOrganizations/org2.example.com/peers/peer0.o\
 rg2.example.com/tls/ca.crt
+
+org3_CertFiles=/opt/fabric-2.3.0/scripts/fabric-samples/test-netw\
+ork/organizations/peerOrganizations/org3.example.com/peers/peer0.o\
+rg3.example.com/tls/ca.crt
 
 Insert() {
 	arg1=$1
@@ -51,6 +57,8 @@ Insert() {
 		--tlsRootCertFiles $org1_CertFiles \
 		--peerAddresses peer0.org2.example.com:9051 \
 		--tlsRootCertFiles $org2_CertFiles \
+		--peerAddresses peer0.org3.example.com:11051 \
+		--tlsRootCertFiles $org3_CertFiles \
 		-c "$args"
 	else
 		echo "您没有足够的权限"
